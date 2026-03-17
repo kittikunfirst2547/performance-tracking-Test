@@ -16,15 +16,17 @@ export async function GET() {
       orderBy: { submittedAt: "asc" },
     });
 
+    type Sub = typeof submissions[number];
+
     const totalAssignments = await prisma.assignment.count();
     const submitted = submissions.length;
-    const graded = submissions.filter((s) => s.status === "GRADED").length;
-    const late = submissions.filter((s) => s.status === "LATE").length;
+    const graded = submissions.filter((s: Sub) => s.status === "GRADED").length;
+    const late = submissions.filter((s: Sub) => s.status === "LATE").length;
     const avgScore =
       graded > 0
         ? submissions
-            .filter((s) => s.score !== null)
-            .reduce((acc: number, s) => acc + (s.score ?? 0), 0) / graded  // ← เพิ่ม acc: number
+            .filter((s: Sub) => s.score !== null)
+            .reduce((acc: number, s: Sub) => acc + (s.score ?? 0), 0) / graded
         : 0;
 
     return NextResponse.json({
@@ -33,7 +35,7 @@ export async function GET() {
       graded,
       late,
       avgScore: Math.round(avgScore * 10) / 10,
-      submissions: submissions.map((s) => ({
+      submissions: submissions.map((s: Sub) => ({
         title: s.assignment.title,
         score: s.score,
         maxScore: s.assignment.maxScore,
@@ -54,15 +56,19 @@ export async function GET() {
     },
   });
 
+  // ← เพิ่ม type ตรงนี้
+  type AssignmentWithSubs = typeof assignments[number];
+  type SubWithStudent = AssignmentWithSubs["submissions"][number];
+
   const totalStudents = await prisma.user.count({
     where: { role: "STUDENT" },
   });
 
-  const allSubmissions = assignments.flatMap((a) => a.submissions);
-  const graded = allSubmissions.filter((s) => s.status === "GRADED");
+  const allSubmissions = assignments.flatMap((a: AssignmentWithSubs) => a.submissions);
+  const graded = allSubmissions.filter((s: SubWithStudent) => s.status === "GRADED");
   const avgScore =
     graded.length > 0
-      ? graded.reduce((acc: number, s) => acc + (s.score ?? 0), 0) / graded.length  // ← เพิ่ม acc: number
+      ? graded.reduce((acc: number, s: SubWithStudent) => acc + (s.score ?? 0), 0) / graded.length
       : 0;
 
   return NextResponse.json({
@@ -70,16 +76,15 @@ export async function GET() {
     totalAssignments: assignments.length,
     totalSubmissions: allSubmissions.length,
     avgScore: Math.round(avgScore * 10) / 10,
-    assignments: assignments.map((a) => ({
+    assignments: assignments.map((a: AssignmentWithSubs) => ({
       title: a.title,
       maxScore: a.maxScore,
       submissionCount: a.submissions.length,
       avgScore:
-        a.submissions.filter((s) => s.score !== null).length > 0
+        a.submissions.filter((s: SubWithStudent) => s.score !== null).length > 0
           ? Math.round(
-              (a.submissions.reduce((acc: number, s) => acc + (s.score ?? 0), 0) /  // ← เพิ่ม acc: number
-                a.submissions.filter((s) => s.score !== null).length) *
-                10
+              (a.submissions.reduce((acc: number, s: SubWithStudent) => acc + (s.score ?? 0), 0) /
+                a.submissions.filter((s: SubWithStudent) => s.score !== null).length) * 10
             ) / 10
           : 0,
     })),
