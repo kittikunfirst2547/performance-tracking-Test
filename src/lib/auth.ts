@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
 import bcrypt from "bcryptjs";
@@ -49,10 +50,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     // เพิ่ม role ลงใน JWT token
-    jwt({ token, user }) {
+    jwt({ token, user }: { token: JWT; user?: any }) {
       if (user) {
-        token.role = user.role;
-        token.id = user.id;
+        return { ...token, role: user.role, id: user.id };
       }
       return token;
     },
