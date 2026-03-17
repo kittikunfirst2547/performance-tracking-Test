@@ -1,9 +1,12 @@
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 // GET — Teacher ดู submissions ทั้งหมดของงานตัวเอง
 export async function GET() {
+  const prisma = getPrisma();
   const session = await auth();
 
   if (!session || session.user.role !== "TEACHER") {

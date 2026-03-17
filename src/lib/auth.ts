@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "./prisma";
+import { getPrisma } from "./prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -24,6 +24,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // 1. Validate ข้อมูลที่รับมา
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        const prisma = getPrisma();
 
         // 2. หา user จาก database
         const user = await prisma.user.findUnique({

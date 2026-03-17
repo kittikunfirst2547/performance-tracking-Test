@@ -1,11 +1,14 @@
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const prisma = getPrisma();
   try {
     const session = await auth();
 

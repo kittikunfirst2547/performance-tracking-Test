@@ -1,7 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+
+export const dynamic = 'force-dynamic';
 
 // กำหนด validation rules
 const registerSchema = z.object({
@@ -12,6 +14,8 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const prisma = getPrisma();
+
   try {
     // 1. รับข้อมูลจาก request
     const body = await request.json();

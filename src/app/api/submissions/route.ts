@@ -1,9 +1,12 @@
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 // GET — ดึง submissions ของนักศึกษาคนนั้น
 export async function GET() {
+  const prisma = getPrisma();
   const session = await auth();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,6 +25,7 @@ export async function GET() {
 
 // POST — ส่งงาน
 export async function POST(request: Request) {
+  const prisma = getPrisma();
   const session = await auth();
 
   if (!session || session.user.role !== "STUDENT") {

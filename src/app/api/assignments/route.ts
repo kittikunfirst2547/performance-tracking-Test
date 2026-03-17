@@ -1,7 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+
+export const dynamic = 'force-dynamic';
 
 const assignmentSchema = z.object({
   title: z.string().min(1, "กรุณากรอกชื่องาน"),
@@ -12,6 +14,7 @@ const assignmentSchema = z.object({
 
 // GET — ดึง assignments ทั้งหมด
 export async function GET() {
+  const prisma = getPrisma();
   const session = await auth();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,6 +41,7 @@ export async function GET() {
 
 // POST — สร้าง assignment ใหม่ (เฉพาะ Teacher)
 export async function POST(request: Request) {
+  const prisma = getPrisma();
   const session = await auth();
 
   if (!session || session.user.role !== "TEACHER") {
