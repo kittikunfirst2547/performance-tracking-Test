@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ตารางผู้ใช้งาน
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("STUDENT") // STUDENT หรือ TEACHER
+  createdAt DateTime @default(now())
+
+  // Relations
+  assignments  Assignment[] // อาจารย์สร้าง assignment
+  submissions  Submission[] // นักศึกษาส่งงาน
+}
+
+// ตารางงานที่มอบหมาย
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  maxScore    Int      @default(100)
+  deadline    DateTime
+  createdAt   DateTime @default(now())
+
+  // Relations
+  teacherId   String
+  teacher     User         @relation(fields: [teacherId], references: [id])
+  submissions Submission[]
+}
+
+// ตารางการส่งงาน
+model Submission {
+  id          String   @id @default(cuid())
+  fileUrl     String?  // ไฟล์ที่ส่ง (optional)
+  note        String?  // หมายเหตุ
+  score       Int?     // คะแนนที่อาจารย์ให้ (null = ยังไม่ได้ตรวจ)
+  status      String   @default("SUBMITTED") // SUBMITTED, GRADED, LATE
+  submittedAt DateTime @default(now())
+
+  // Relations
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id])
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+}

@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Performance Tracking
 
-## Getting Started
+แอปนี้เป็นระบบติดตามผลการเรียน (Performance Tracking) ที่พัฒนาด้วย **Next.js**, **Prisma**, และ **NextAuth** โดยออกแบบให้รองรับการใช้งานของนักเรียนและครูในการดูผลการบ้าน/การส่งงาน และการวัดผลการเรียนรู้
 
-First, run the development server:
+## 🔍 โครงสร้างหลักของโปรเจกต์
+
+- `src/app/` – หน้าเว็บหลัก (Route / App Router)
+- `src/app/(auth)` – หน้าเข้าสู่ระบบ / ลงทะเบียน
+- `src/app/(dashboard)` – หน้าจัดการหลังล็อกอิน (นักเรียน/ครู)
+- `src/app/api/` – API routes (เช่น auth, register, assignments, performance, submissions)
+- `src/lib/` – ไลบรารีช่วยเหลือ (เชื่อมต่อ Prisma, ตั้งค่าการตรวจสอบสิทธิ์)
+- `prisma/schema.prisma` – โมเดลฐานข้อมูล
+
+## 🚀 เริ่มต้นใช้งาน (Development)
+
+1. ติดตั้ง dependencies:
+
+```bash
+npm install
+```
+
+2. สร้างไฟล์ `.env` จากตัวอย่าง `.env.example` (ถ้ามี) แล้วตั้งค่า:
+
+- `DATABASE_URL` (เชื่อมต่อฐานข้อมูล PostgreSQL หรือ SQLite ตามที่ตั้งไว้)
+- `NEXTAUTH_SECRET` (สำหรับ NextAuth)
+- `NEXTAUTH_URL` (เช่น `http://localhost:3000`)
+
+3. สร้างและอัปเดตฐานข้อมูลด้วย Prisma:
+
+```bash
+npx prisma migrate dev
+```
+
+4. รันเซิร์ฟเวอร์สำหรับพัฒนา:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. เปิดเบราว์เซอร์ที่:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧑‍🏫 ฟีเจอร์หลัก
 
-## Learn More
+- ระบบ **ลงทะเบียน/เข้าสู่ระบบ** (NextAuth)
+- แยกผู้ใช้งานเป็น **นักเรียน** และ **ครู**
+- ครูสามารถดู/เพิ่ม/แก้ไข คะแนนหรือการบ้านของนักเรียนได้
+- นักเรียนสามารถดูผลการเรียนและการส่งงานของตนเอง
 
-To learn more about Next.js, take a look at the following resources:
+## 🧩 คำแนะนำเพิ่มเติม
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- ถ้าต้องการดูโครงสร้างฐานข้อมูล ให้ดูไฟล์ `prisma/schema.prisma`
+- API หลักอยู่ใต้ `src/app/api/` (เช่น `performance/route.ts`, `assignments/route.ts`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ คำสั่งที่น่าสนใจ
 
-## Deploy on Vercel
+- `npm run dev` — รันเซิร์ฟเวอร์ในโหมดพัฒนา
+- `npm run build` — สร้างโปรเจกต์สำหรับนำขึ้น production
+- `npm run start` — รันแอปใน production mode
+- `npx prisma studio` — เปิด UI ของ Prisma เพื่อดูข้อมูลในฐานข้อมูล
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+หากต้องการให้ช่วยอธิบายส่วนใดเพิ่มเติม (เช่น การตั้งค่า auth, model, หรือการเพิ่มหน้าฟีเจอร์ใหม่) แจ้งมาได้เลย 😊
