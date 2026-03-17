@@ -10,7 +10,6 @@ export async function GET() {
   }
 
   if (session.user.role === "STUDENT") {
-    // ดึงข้อมูลของนักศึกษาคนนั้น
     const submissions = await prisma.submission.findMany({
       where: { studentId: session.user.id },
       include: { assignment: true },
@@ -25,7 +24,7 @@ export async function GET() {
       graded > 0
         ? submissions
             .filter((s) => s.score !== null)
-            .reduce((acc, s) => acc + (s.score ?? 0), 0) / graded
+            .reduce((acc: number, s) => acc + (s.score ?? 0), 0) / graded  // ← เพิ่ม acc: number
         : 0;
 
     return NextResponse.json({
@@ -44,7 +43,6 @@ export async function GET() {
     });
   }
 
-  // Teacher — ดูภาพรวมทั้งชั้น
   const assignments = await prisma.assignment.findMany({
     where: { teacherId: session.user.id },
     include: {
@@ -64,7 +62,7 @@ export async function GET() {
   const graded = allSubmissions.filter((s) => s.status === "GRADED");
   const avgScore =
     graded.length > 0
-      ? graded.reduce((acc, s) => acc + (s.score ?? 0), 0) / graded.length
+      ? graded.reduce((acc: number, s) => acc + (s.score ?? 0), 0) / graded.length  // ← เพิ่ม acc: number
       : 0;
 
   return NextResponse.json({
@@ -79,7 +77,7 @@ export async function GET() {
       avgScore:
         a.submissions.filter((s) => s.score !== null).length > 0
           ? Math.round(
-              (a.submissions.reduce((acc, s) => acc + (s.score ?? 0), 0) /
+              (a.submissions.reduce((acc: number, s) => acc + (s.score ?? 0), 0) /  // ← เพิ่ม acc: number
                 a.submissions.filter((s) => s.score !== null).length) *
                 10
             ) / 10
