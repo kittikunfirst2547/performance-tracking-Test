@@ -4,23 +4,21 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-
 // ตารางผู้ใช้งาน
 model User {
   id        String   @id @default(cuid())
   name      String
   email     String   @unique
   password  String
-  role      String   @default("STUDENT") // STUDENT หรือ TEACHER
+  role      String   @default("STUDENT")
   createdAt DateTime @default(now())
 
-  // Relations
-  assignments  Assignment[] // อาจารย์สร้าง assignment
-  submissions  Submission[] // นักศึกษาส่งงาน
+  assignments  Assignment[]
+  submissions  Submission[]
 }
 
-// ตารางงานที่มอบหมาย
 model Assignment {
   id          String   @id @default(cuid())
   title       String
@@ -29,22 +27,19 @@ model Assignment {
   deadline    DateTime
   createdAt   DateTime @default(now())
 
-  // Relations
   teacherId   String
   teacher     User         @relation(fields: [teacherId], references: [id])
   submissions Submission[]
 }
 
-// ตารางการส่งงาน
 model Submission {
   id          String   @id @default(cuid())
-  fileUrl     String?  // ไฟล์ที่ส่ง (optional)
-  note        String?  // หมายเหตุ
-  score       Int?     // คะแนนที่อาจารย์ให้ (null = ยังไม่ได้ตรวจ)
-  status      String   @default("SUBMITTED") // SUBMITTED, GRADED, LATE
+  fileUrl     String?
+  note        String?
+  score       Int?
+  status      String   @default("SUBMITTED")
   submittedAt DateTime @default(now())
 
-  // Relations
   studentId    String
   student      User       @relation(fields: [studentId], references: [id])
   assignmentId String
