@@ -1,6 +1,10 @@
+## Live Demo
+🔗 https://performance-tracking-test-4zaff9t12-kittikunfirst2547s-projects.vercel.app/
+
 # Performance Tracking
 
 แอปนี้เป็นระบบติดตามผลการเรียน (Performance Tracking) ที่พัฒนาด้วย **Next.js**, **Prisma**, และ **NextAuth** โดยออกแบบให้รองรับการใช้งานของนักเรียนและครูในการดูผลการบ้าน/การส่งงาน และการวัดผลการเรียนรู้
+
 
 ## 🔍 โครงสร้างหลักของโปรเจกต์
 
